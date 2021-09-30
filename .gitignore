@@ -1,4 +1,6 @@
 *.pyc
 **/__pycache__
 **/__pycache__
+**/credentials
+dataset_construction/.bash_profile
 .DS_Store
