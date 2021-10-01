@@ -40,7 +40,6 @@ class Authenticator:
                 auth=HTTPBasicAuth(SPOTIFY_CLIENT_ID, SPOTIFY__CLIENT_SECRET),
                 headers=headers,
                 )
-            print(response.json())
             response_dict = response.json()
             return (response_dict["access_token"], datetime.now() + timedelta(0,response_dict['expires_in']))
         except:
