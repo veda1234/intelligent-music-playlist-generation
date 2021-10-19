@@ -30,8 +30,13 @@ class DatasetManager:
         
 if __name__ == '__main__':
     files = os.listdir(PLAYLIST_PATH)
+    print(len(files))
+    i = 0
     dsm = DatasetManager()
     for file in files:
         dsm.process_file(file)
-        print('{o} done'.format(file))
+        print('{0} done'.format(file))
+        i += 1
+        if i % 100 == 0:
+            print('{0} done'.format(i))
     
