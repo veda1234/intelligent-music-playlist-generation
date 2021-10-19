@@ -21,8 +21,9 @@ def create_clean_json(filepath, prefix):
         object_array = json.load(open(filepath + '/' + file, 'r'))
         for obj in object_array:
             if obj["id"] not in unique_ids:
+                print(obj["id"])
                 clean_json.append(obj)
-            unique_ids.add(obj["id"])
+                unique_ids.add(obj["id"])
             if len(clean_json) == 5000:
                 write_json(filepath, prefix, clean_json)
                 clean_json = []
