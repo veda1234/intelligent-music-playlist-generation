@@ -75,7 +75,7 @@ class TrackDataManager:
     def add_track(self,track_id):
         if track_id not in self.track_ids:
             self.new_track_ids.add(track_id)
-            if len(self.new_track_ids) >= 50:
+            if len(self.new_track_ids) >= 20:
                 self.fetch_track_data(self.new_track_ids)
     
 
