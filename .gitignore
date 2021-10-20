@@ -9,3 +9,4 @@ spotify_million_playlist_dataset
 **/dataset
 dataset_construction/search_ids.py
 dataset_construction/store_ids.pickle
+**/dataset/*
