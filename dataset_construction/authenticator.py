@@ -46,7 +46,3 @@ class Authenticator:
             print(sys.exc_info()[2])
             print(traceback.format_exc())
             return None
-
-
-
-

@@ -3,5 +3,10 @@
 **/__pycache__
 **/credentials
 dataset_construction/.bash_profile
+dataset_construction/.bashrc
 .DS_Store
+spotify_million_playlist_dataset
+**/dataset
+dataset_construction/search_ids.py
+dataset_construction/store_ids.pickle
 **/dataset/*
