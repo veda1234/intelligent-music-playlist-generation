@@ -1,2 +1,4 @@
 requests==2.26.0
 boto3==1.18.65
+Django==3.2.7
+djangorestframework==3.12.4
