@@ -16,7 +16,7 @@ def create_unique_ids(filepath):
     files = os.listdir(filepath)
     clean_json = []
     for file in files:
-        if file.startswith("clean"):
+        if file.startswith("clean") or file.startswith("missing"):
             object_array = json.load(open(filepath + '/' + file, 'r'))
             for obj in object_array:
                 unique_ids.add(obj["id"])

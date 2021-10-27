@@ -10,10 +10,11 @@ ALBUM_DATA_PATH = '../dataset/albums'
 ALBUM_API_URL = 'https://api.spotify.com/v1/albums'
 
 class AlbumDataManager:
-    def __init__(self):
+    def __init__(self, use_id_file = True, prefix = ''):
         self.new_album_ids = set()
+        self.prefix = prefix
         self.album_data = []
-        if os.path.exists(ALBUM_ID_PATH):
+        if use_id_file and os.path.exists(ALBUM_ID_PATH):
             album_id_file = open(ALBUM_ID_PATH,'rb')
             self.album_ids = pickle.load(album_id_file)
             album_id_file.close()
@@ -40,7 +41,7 @@ class AlbumDataManager:
     def write_album_data(self):
         files = os.listdir(ALBUM_DATA_PATH)
         new_num = len(files) + 1
-        out_f = open(ALBUM_DATA_PATH + '/album_data_{0}.json'.format(new_num), 'w')
+        out_f = open(ALBUM_DATA_PATH + '/{0}album_data_{1}.json'.format(self.prefix, new_num), 'w')
         out_f.write(json.dumps(self.album_data, indent=4))
         out_f.close()
     

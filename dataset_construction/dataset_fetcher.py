@@ -10,6 +10,7 @@ class DatasetManager:
         self.album_data_manager = AlbumDataManager()
         self.track_data_manager = TrackDataManager()
     
+    
     def process_file(self, filename):
         data_dict = json.load(open(PLAYLIST_PATH + '/' + filename, 'r'))
         playlists = data_dict['playlists']

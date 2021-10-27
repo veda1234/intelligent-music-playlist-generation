@@ -9,10 +9,11 @@ TRACK_DATA_PATH = '../dataset/tracks'
 TRACK_API_URL = 'https://api.spotify.com/v1/tracks'
 
 class TrackDataManager:
-    def __init__(self):
+    def __init__(self, use_id_file=True, prefix=''):
         self.new_track_ids = set()
         self.track_data = []
-        if os.path.exists(TRACK_ID_PATH):
+        self.prefix = prefix
+        if use_id_file and os.path.exists(TRACK_ID_PATH):
             track_id_file = open(TRACK_ID_PATH,'rb')
             self.track_ids = pickle.load(track_id_file)
             track_id_file.close()
@@ -40,7 +41,7 @@ class TrackDataManager:
     def write_track_data(self):
         files = os.listdir(TRACK_DATA_PATH)
         new_num = len(files) + 1
-        out_f = open(TRACK_DATA_PATH + '/track_data_{0}.json'.format(new_num), 'w')
+        out_f = open(TRACK_DATA_PATH + '/{0}track_data_{1}.json'.format(self.prefix, new_num), 'w')
         out_f.write(json.dumps(self.track_data, indent=4))
         out_f.close()
     
