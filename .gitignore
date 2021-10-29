@@ -10,3 +10,6 @@ spotify_million_playlist_dataset
 dataset_construction/search_ids.py
 dataset_construction/store_ids.pickle
 **/dataset/*
+.node
+node_modules/
+web-app/restful_rhythms/db.sqlite3

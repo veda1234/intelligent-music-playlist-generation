@@ -23,7 +23,10 @@ from django.urls import path, include
 router = routers.DefaultRouter()
 router.register(r'songs',songViews.SongView, basename='songs')
 
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include(router.urls)),
+	path('admin/', admin.site.urls),
+    path('',include('harmonic_ui.urls')),
+    path('spotify/', include('spotify.urls')),
+    path('api/', include(router.urls)),
 ]
