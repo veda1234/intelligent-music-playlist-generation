@@ -1,0 +1,1 @@
+from .dynamoDBModel import DynamoModel

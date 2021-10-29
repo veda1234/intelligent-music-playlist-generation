@@ -13,11 +13,20 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
+from rest_framework import routers
+from songs import views as songViews
 from django.contrib import admin
 from django.urls import path, include
+
+
+router = routers.DefaultRouter()
+router.register(r'songs',songViews.SongView, basename='songs')
+
 
 urlpatterns = [
 	path('admin/', admin.site.urls),
     path('',include('harmonic_ui.urls')),
-    path('spotify/', include('spotify.urls'))
+    path('spotify/', include('spotify.urls')),
+    path('api/', include(router.urls)),
 ]
