@@ -5,7 +5,6 @@ import traceback
 CREDENTIALS_FILE = '../../credentials/web_app_credentials.json'
 
 DBInstance = None
-
 try:
     credentials = json.load(open(CREDENTIALS_FILE, 'r'))
     dynamodb_credentials = credentials['dynamo_db'] 

@@ -7,6 +7,7 @@ class DynamoModel:
         try:
             model = DBInstance.Table(modelName)
             self.model = model
+            self.model_name = modelName
         except:
             print("some error while getting model")
             traceback.print_exc()
@@ -29,7 +30,7 @@ class DynamoModel:
     
     def get_item(self, key):
         try:
-            response = self.model.get_item(Key=key)
+            response = self.model.get_item(Key= { 'id' : key })
             return response.get("Item") 
         except:
             print("some error while getting model")
@@ -52,6 +53,35 @@ class DynamoModel:
             return data[:limit]
         except:
             print("some error while getting items")
+            traceback.print_exc()
+            raise
+    
+    def get_items_by_key(self, keys):
+        try:
+            response = {}
+            for key in keys:
+                results = self.model.query(
+                    ExpressionAttributeValues={
+                        ":v1": str(key)
+                    },
+                    KeyConditionExpression='id = :v1'
+                )
+                response[key] = results['Items'][0]
+            # RequestItems = {
+            #     self.model_name: {
+            #         "Keys": [
+            #             {
+            #                 "id": { "S" : "0OFfw3MUbUIzvIFeRDjR2N" }
+            #             }]
+            #         }
+            #     }
+            # print(RequestItems)
+            # response = DBInstance.batch_get_item(
+            #     RequestItems=RequestItems
+            # )
+            return response
+        except:
+            print("some error while getting items by key")
             traceback.print_exc()
             raise
     

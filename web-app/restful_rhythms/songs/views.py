@@ -1,5 +1,6 @@
 from rest_framework import viewsets
 from .models import Track
+from albums.models import Album
 from rest_framework.response import Response
 import traceback
 
@@ -8,6 +9,8 @@ class SongView(viewsets.ViewSet):
         try:
             songs = Track.get_songs()
             song_responses = []
+            album_ids = [song.get("album_id") for song in songs]
+            albums = Album.get_albums_by_id(album_ids)
             for song in songs:
                 artists = song.get("artists")
                 if artists:
@@ -28,7 +31,7 @@ class SongView(viewsets.ViewSet):
                     "duration_minutes": duration_minutes,
                     "duration_seconds": duration_seconds,
                     "duration_hours": duration_hours,
-                    "album": song.get("album_id"),
+                    "album": albums.get(song.get("album_id")).get("name"),
                     "preview_url": song["preview_url"]
                 })
             return Response(song_responses)
