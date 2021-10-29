@@ -34,6 +34,7 @@ class SongView(viewsets.ViewSet):
                     "album": albums.get(song.get("album_id")).get("name"),
                     "preview_url": song["preview_url"]
                 })
+                
             return Response(song_responses)
         except:
             print("some error occured while fetching songs")

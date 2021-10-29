@@ -8,6 +8,6 @@ def index(request, *args, **kwargs):
     return render(request, 'frontend/index.html')
 
 def index_with_authentication(request, *args, **kwargs):
-    if is_spotify_authenticated(request.session.session_key):
+    if request.session.session_key and is_spotify_authenticated(request.session.session_key):
         return render(request, 'frontend/index.html')
     return redirect('/')

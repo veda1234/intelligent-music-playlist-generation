@@ -15,14 +15,8 @@ export default class App extends Component {
   }
 
   render() {
-    // return (
-    //   <div className="center">
-    //     <h1></h1>
-    //     <Room />
-    //   </div>
-    // );
     return (
-      <div className="center">
+      <div>
       <BrowserRouter>
       <Route path="/" exact render={() => <HomePage/>}></Route>
       <Route path="/room" exact render={() => <Room/>}></Route>
@@ -30,11 +24,6 @@ export default class App extends Component {
       </BrowserRouter>
       </div>
     );
-    // ReactDOM.render((
-    //   <BrowserRouter>
-    //     <Link to="/Room">Home</Link>
-    //   </BrowserRouter>
-    // ), holder);
   }
 }
 

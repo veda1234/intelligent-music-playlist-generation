@@ -15,7 +15,7 @@ export default class HomePage extends Component {
 
   render() {
     return (
-      <Grid container spacing={3}>
+      <Grid container spacing={3} className="center">
         <Grid item xs={12} align="center">
         <img className="logo" src={MainPage} alt="MainPage slide"/>
         </Grid>
