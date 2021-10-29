@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
+import MainPage from '../../static/images/Music_logo.jpeg'
 import {
-  Route,
-  BrowserRouter,
   Link
 } from "react-router-dom";
-import Room from "./Room";
-import WelcomePage from "./WelcomePage"
+import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
 
 export default class HomePage extends Component {
   constructor(props) {
@@ -15,12 +15,23 @@ export default class HomePage extends Component {
 
   render() {
     return (
-      <div className="center">
-      {/* <BrowserRouter> */}
-      <h1>Welcome to the Intelligent Music Playlist generator!</h1>
-      <Link to="/room"className="btn btn-primary">Try it out</Link>
-      {/* </BrowserRouter> */}
-      </div>
+      <Grid container spacing={3}>
+        <Grid item xs={12} align="center">
+        <img className="logo" src={MainPage} alt="MainPage slide"/>
+        </Grid>
+        <Grid item xs={12} align="center">
+          <Typography component="h2" variant="h2">
+          Welcome to the Intelligent Music Playlist generator
+          </Typography>
+        </Grid>
+          <Grid item xs={12} align="center">
+          <Typography component="h4" variant="h4">
+          <Button color="primary" variant="contained" to="/room" component={Link}>
+          Try it out
+            </Button>
+          </Typography>
+          </Grid>
+       </Grid>
     );
   }
 }

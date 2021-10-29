@@ -3,6 +3,7 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
+  background-color:whitesmoke;
 }
 
 #main {
@@ -24,4 +25,9 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.logo{
+  height: 200px;
+  width: 200px;
 }
