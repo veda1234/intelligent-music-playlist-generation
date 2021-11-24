@@ -28,7 +28,7 @@ class SongView(viewsets.ViewSet):
                     duration_hours = duration_minutes // 60
                     duration_seconds = duration_seconds % 60
                     duration_minutes = duration_minutes % 60
-                print(get_song_emotion(song.get('name'), artists[0]))
+                # print(get_song_emotion(song.get('name'), artists[0]))
                 song_responses.append({
                     "name": song.get("name"),
                     "id": song.get("id"),
