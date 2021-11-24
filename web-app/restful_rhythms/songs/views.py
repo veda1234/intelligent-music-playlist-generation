@@ -3,6 +3,10 @@ from .models import Track
 from albums.models import Album
 from rest_framework.response import Response
 import traceback
+import sys
+sys.path.append('../../')
+
+from lyric_emotion_detection.emotion_fetcher import get_song_emotion
 
 class SongView(viewsets.ViewSet):
     def list(self, request, format=None):
@@ -24,6 +28,7 @@ class SongView(viewsets.ViewSet):
                     duration_hours = duration_minutes // 60
                     duration_seconds = duration_seconds % 60
                     duration_minutes = duration_minutes % 60
+                print(get_song_emotion(song.get('name'), artists[0]))
                 song_responses.append({
                     "name": song.get("name"),
                     "id": song.get("id"),

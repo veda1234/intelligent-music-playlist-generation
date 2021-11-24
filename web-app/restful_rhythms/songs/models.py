@@ -1,6 +1,7 @@
 from common_utils import DynamoModel
 import traceback
 
+
 class TrackClass(DynamoModel):
     def __init__(self):
         super(TrackClass, self).__init__('tracks')
