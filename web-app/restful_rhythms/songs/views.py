@@ -6,7 +6,8 @@ import traceback
 import sys
 sys.path.append('../../')
 
-from lyric_emotion_detection.emotion_fetcher import get_song_emotion
+# from lyric_emotion_detection.emotion_fetcher import get_song_emotion
+import random
 
 class SongView(viewsets.ViewSet):
     def list(self, request, format=None):
@@ -28,7 +29,7 @@ class SongView(viewsets.ViewSet):
                     duration_hours = duration_minutes // 60
                     duration_seconds = duration_seconds % 60
                     duration_minutes = duration_minutes % 60
-                # print(get_song_emotion(song.get('name'), artists[0]))
+                cluster_number = random.randrange(1,6)
                 song_responses.append({
                     "name": song.get("name"),
                     "id": song.get("id"),
@@ -37,7 +38,8 @@ class SongView(viewsets.ViewSet):
                     "duration_seconds": duration_seconds,
                     "duration_hours": duration_hours,
                     "album": albums.get(song.get("album_id")).get("name"),
-                    "preview_url": song["preview_url"]
+                    "preview_url": song["preview_url"],
+                    "cluster_number": cluster_number,
                 })
                 
             return Response(song_responses)
