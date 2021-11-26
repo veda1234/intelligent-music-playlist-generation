@@ -11,7 +11,7 @@ sys.path.append(cur_dir_path)
 model = BertForSequenceClassification.from_pretrained('{0}/model'.format(cur_dir_path))
 tokenizer = BertTokenizer.from_pretrained('{0}/tokenizer'.format(cur_dir_path))
 import traceback 
-from lyric_fetcher import get_lyrics
+from lyric_scrapper import get_lyrics
 
 ## emotion labels
 label2int = {
