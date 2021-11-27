@@ -3,9 +3,12 @@ from .db import DBInstance
 import traceback
 
 class FirestoreModel:
-    def __init__(self, modelName, keyField='id'):
+    def __init__(self, modelName, keyField='id',is_collection_group=False):
         try:
-            model = DBInstance.collection(modelName)
+            if is_collection_group:
+                model = DBInstance.collection_group(modelName)
+            else:
+                model = DBInstance.collection(modelName)
             self.model = model
             self.model_name = modelName
             self.key_field = keyField
