@@ -15,7 +15,6 @@ class TrackClass(FirestoreModel):
                     query.append((key,'in',query_params[key]))
                 else:
                     query.append((key, '==', query_params[key]))
-            print(query)
             songs = super().list_items(query=query, limit = 25, LastEvaluatedKey=prevRecord)
             return songs
         except:
