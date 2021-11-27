@@ -44,9 +44,9 @@ def get_song_emotion(song_name, artist_name):
     try:
         lyrics = get_lyrics(song_name, artist_name)
         if lyrics:
-            return get_lyric_emotion(lyrics)
+            return { 'lyrics': lyrics, 'emotion': get_lyric_emotion(lyrics) }
         else:
-            return 'NA'
+            return None
     except:
         print("error occured while fetching emotion of song {0} by {1}".format(song_name, artist_name))
         traceback.print_exc()
