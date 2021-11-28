@@ -211,7 +211,38 @@ class SongView(viewsets.ViewSet):
             add_song_to_user(request.session.session_key, request.data['track_id'])
             return Response("success")
         except:
-            print(f"some error occured while creating song for {request.data}")
+            print(f"some error occured while adding song to user for {request.data}")
             print(traceback.print_exc())
-            return Response({"error" : traceback.format_exc() }, status=500)   
+            return Response({"error" : traceback.format_exc() }, status=500)
+    
+
+    @action(detail=False,methods=['post'], name='export')
+    def export(self,request):
+        try:
+            is_authenticated = is_spotify_authenticated(
+                    self.request.session.session_key)
+            if not is_authenticated:
+                return Response({'error' : 'not authenticated' }, status=status.HTTP_401_UNAUTHORIZED)
+            session_id = request.session.session_key
+            curr_user_data = execute_spotify_api_request(session_id, '/me')
+            user_id = curr_user_data['id']
+            query_params = request.data
+            response = execute_spotify_api_request(session_id, f'/users/{user_id}/playlists',
+                { 'name': query_params.get('name')},post_=True)
+            if 'error' in response:
+                return Response({'error': 'cannot create playlist' },status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            print(response)
+            playlist_id = response['id']
+            track_uris = []
+            for track_id in query_params['track_ids']:
+                track_uris.append(f'spotify:track:{track_id}')
+            response = execute_spotify_api_request(session_id,f'/playlists/{playlist_id}/tracks',
+                { 'uris': track_uris }, post_=True)
+            if 'error' in response:
+                return Response({'error': 'cannot add tracks' },status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response('sucess')
+        except:
+            print(f"some error occured while exporting songs for {request.query_params.dict()}")
+            print(traceback.print_exc())
+            return Response({"error" : traceback.format_exc() }, status=500)
         
