@@ -2,6 +2,8 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 import traceback
 import sys
+from spotify.util import is_spotify_authenticated
+from rest_framework import status
 
 NUM_CLUSTERS = 7
 emotion_labels = {
@@ -16,6 +18,10 @@ emotion_labels = {
 class EmotionView(viewsets.ViewSet):
     def list(self, request, format=None):
         try:
+            is_authenticated = is_spotify_authenticated(
+                self.request.session.session_key)
+            if not is_authenticated:
+                return Response({'error' : 'not authenticated' }, status=status.HTTP_401_UNAUTHORIZED)
             return Response({ "emotions": list(emotion_labels.keys()) })
         except:
             print("some error occured while fetching emotions")
@@ -25,6 +31,10 @@ class EmotionView(viewsets.ViewSet):
 class ClusterView(viewsets.ViewSet):
     def list(self, request, format=None):
         try:
+            is_authenticated = is_spotify_authenticated(
+                self.request.session.session_key)
+            if not is_authenticated:
+                return Response({'error' : 'not authenticated' }, status=status.HTTP_401_UNAUTHORIZED)
             return Response({ 
                 "clusters" : { f"Cluster {i}" : i for i in list(range(NUM_CLUSTERS)) } 
             })

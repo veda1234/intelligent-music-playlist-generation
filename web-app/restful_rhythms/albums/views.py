@@ -3,6 +3,8 @@ from .models import Album
 from rest_framework.response import Response
 import traceback
 import sys
+from spotify.util import is_spotify_authenticated
+from rest_framework import status
 
 def format_album(album):
     artists = album.get("artists")
@@ -21,6 +23,10 @@ def format_album(album):
 class AlbumView(viewsets.ViewSet):
     def list(self, request, format=None):
         try:
+            is_authenticated = is_spotify_authenticated(
+                self.request.session.session_key)
+            if not is_authenticated:
+                return Response({'error' : 'not authenticated' }, status=status.HTTP_401_UNAUTHORIZED)
             query_params = request.query_params.dict()
             prevId = None
             if 'prevId' in query_params:
