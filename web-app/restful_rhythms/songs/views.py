@@ -231,7 +231,6 @@ class SongView(viewsets.ViewSet):
                 { 'name': query_params.get('name')},post_=True)
             if 'error' in response:
                 return Response({'error': 'cannot create playlist' },status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            print(response)
             playlist_id = response['id']
             track_uris = []
             for track_id in query_params['track_ids']:
