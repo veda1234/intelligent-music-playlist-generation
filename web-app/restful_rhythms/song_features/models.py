@@ -3,7 +3,7 @@ import traceback
 
 class TrackFeaturesClass(FirestoreModel):
     def __init__(self):
-        super(TrackFeaturesClass, self).__init__('track_features', keyField='audio_features.id')
+        super(TrackFeaturesClass, self).__init__('track_features')
     
     def get_track_features(self, track_id):
         try:

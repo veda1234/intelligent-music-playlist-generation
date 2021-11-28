@@ -32,6 +32,7 @@ class FirestoreModel:
         except:
             print("some error while writing item")
             traceback.print_exc()
+            raise
     
     def get_item(self, key):
         try:
