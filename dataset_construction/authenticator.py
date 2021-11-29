@@ -6,8 +6,8 @@ from datetime import timedelta, datetime
 import sys
 import traceback
 
-SPOTIFY__CLIENT_SECRET = os.environ.get('SPOTIFY_CLIENT_SECRET') 
-SPOTIFY_CLIENT_ID = os.environ.get('SPOTIFY_CLIENT_ID')
+SPOTIFY__CLIENT_SECRET = "a12713924d034bc89a9220d9fa36f251"
+SPOTIFY_CLIENT_ID = "a976caaa3732410b9db88d4832b005b8"
 
 URL = "https://accounts.spotify.com/api/token"
 GRANT_TYPE = "client_credentials"
@@ -34,6 +34,7 @@ class Authenticator:
         return self.token
 
     def _get_auth_token(self):
+        print('Spotify client',str(SPOTIFY__CLIENT_SECRET))
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
         try:
             response = requests.post(URL,data={ "grant_type": GRANT_TYPE }, 
@@ -41,6 +42,7 @@ class Authenticator:
                 headers=headers,
                 )
             response_dict = response.json()
+            print(response_dict)
             return (response_dict["access_token"], datetime.now() + timedelta(0,response_dict['expires_in']))
         except:
             print(sys.exc_info()[2])
