@@ -15,3 +15,5 @@ node_modules/
 web-app/restful_rhythms/db.sqlite3
 .ipynb_checkpoints/
 web-app/restful_rhythms/harmonic_ui/src/components/Test.js
+lyric_emotion_detection/model
+lyric_emotion_detection/tokenizer
