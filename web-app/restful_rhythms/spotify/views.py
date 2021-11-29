@@ -9,7 +9,7 @@ from .util import update_or_create_user_tokens, is_spotify_authenticated, execut
 
 class AuthURL(APIView):
     def get(self, request, format=None):
-        scopes = 'user-read-playback-state user-modify-playback-state user-read-currently-playing playlist-read-private'
+        scopes = 'user-read-playback-state user-modify-playback-state user-read-currently-playing playlist-read-private playlist-modify-private playlist-read-collaborative playlist-modify-public'
 
         url = Request('GET', 'https://accounts.spotify.com/authorize', params={
             'scope': scopes,
@@ -17,8 +17,7 @@ class AuthURL(APIView):
             'redirect_uri': REDIRECT_URI,
             'client_id': CLIENT_ID
         }).prepare().url
-        print(url)
-
+        
         return Response({'url': url}, status=status.HTTP_200_OK)
 
 
@@ -54,3 +53,22 @@ class IsAuthenticated(APIView):
         is_authenticated = is_spotify_authenticated(
             self.request.session.session_key)
         return Response({'status': is_authenticated}, status=status.HTTP_200_OK)
+
+class SearchView(APIView):
+    def get(self, request, format=None):
+        is_authenticated = is_spotify_authenticated(
+            self.request.session.session_key)
+        if not is_authenticated:
+            return Response({'error' : 'not authenticated' }, status=status.HTTP_401_UNAUTHORIZED)
+        query_params = request.query_params.dict()
+        if 'search' not in query_params:
+            return Response({"error": "search query should be provided in search param"}, status=400) 
+        spotify_search_params = {
+            'q': query_params['search'],
+            'type': 'track',
+            'limit': 25,
+        }
+        if 'page_number' in query_params:
+            spotify_search_params['offset'] = 25*(int(query_params['page_number']) - 1)
+        response = execute_spotify_api_request(self.request.session.session_key, '/search',spotify_search_params)
+        return Response(response['tracks']["items"])

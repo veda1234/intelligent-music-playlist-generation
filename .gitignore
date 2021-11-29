@@ -13,6 +13,8 @@ dataset_construction/store_ids.pickle
 .node
 node_modules/
 web-app/restful_rhythms/db.sqlite3
+lyric_emotion_detection/model
+lyric_emotion_detection/tokenizer
 .ipynb_checkpoints/
 web-app/restful_rhythms/harmonic_ui/src/components/Test.js
 lyric_emotion_detection/model

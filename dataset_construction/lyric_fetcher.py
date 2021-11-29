@@ -46,7 +46,7 @@ if __name__ == "__main__":
     print("lyric available for {0} songs out of {1} songs".format(count, tot_count))
     point_reached = False
     lyric_map = {}
-    last_key = '0phSNz4zOc6BknteMItlWm'
+    last_key = '1U4jkbfzoAQRc7qrGhrrUQ'
     for i, key in enumerate(track_urls):
         try:
             if key == last_key:
