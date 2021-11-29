@@ -18,7 +18,11 @@ class ArtistView(viewsets.ViewSet):
             if 'prevId' in query_params:
                 prevId = query_params['prevId']
                 del query_params['prevId']
-            songs = Track.get_songs(prevRecord = prevId)
+            nextId = None
+            if 'nextId' in query_params:
+                nextId = query_params['nextId']
+                del query_params['nextId']
+            songs = Track.get_songs(prevRecord = prevId, nextRecord = nextId)
             artist_responses = []
             for song in songs:
                 song_response = song['artists'][0]

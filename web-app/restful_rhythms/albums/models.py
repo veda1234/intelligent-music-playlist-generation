@@ -14,10 +14,10 @@ class AlbumClass(FirestoreModel):
             traceback.print_exc()
             raise
     
-    def get_albums(self,prevRecord = None, limit = 25):
+    def get_albums(self,prevRecord = None, nextRecord = None, limit = 25):
         try:
             LastEvaluatedKey = None
-            albums = super().list_items(limit = 25, LastEvaluatedKey=prevRecord)
+            albums = super().list_items(limit = 25, LastEvaluatedKey=prevRecord, nextRecord = nextRecord)
             return albums
         except:
             print("some error occured in fetching songs")

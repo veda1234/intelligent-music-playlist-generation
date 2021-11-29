@@ -101,9 +101,13 @@ class SongView(viewsets.ViewSet):
                 return Response({'error' : 'not authenticated' }, status=status.HTTP_401_UNAUTHORIZED)
             query_params = request.query_params.dict()
             prevId = None
+            nextId = None
             if 'prevId' in query_params:
                 prevId = query_params['prevId']
                 del query_params['prevId']
+            elif 'nextId' in query_params:
+                nextId = query_params['nextId']
+                del query_params['nextId']
             param_keys = list(query_params.keys())
             for q in param_keys:
                 if q in ['cluster','emotion']:
@@ -116,7 +120,7 @@ class SongView(viewsets.ViewSet):
                     song_ids = UserTrack.get_user_songs(user_id)
                     del query_params['by_user']
                     query_params['id'] = song_ids                
-            songs = Track.get_songs(query_params=query_params, prevRecord = prevId)
+            songs = Track.get_songs(query_params=query_params, prevRecord = prevId, nextRecord=nextId)
             song_responses = []
             album_ids = [song.get("album_id") for song in songs]
             albums = Album.get_albums_by_id(album_ids)

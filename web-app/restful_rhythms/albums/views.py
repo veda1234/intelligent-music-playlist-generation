@@ -32,7 +32,11 @@ class AlbumView(viewsets.ViewSet):
             if 'prevId' in query_params:
                 prevId = query_params['prevId']
                 del query_params['prevId']
-            albums = Album.get_albums(prevRecord = prevId)
+            nextId = None
+            if 'nextId' in query_params:
+                nextId = query_params['nextId']
+                del query_params['nextId']
+            albums = Album.get_albums(prevRecord = prevId, nextRecord = nextId)
             album_responses = []
             for album in albums:
                 album_responses.append(format_album(album))

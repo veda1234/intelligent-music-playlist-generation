@@ -6,16 +6,15 @@ class TrackClass(FirestoreModel):
     def __init__(self):
         super(TrackClass, self).__init__('tracks')
     
-    def get_songs(self,query_params={}, prevRecord = None, limit = 25):
+    def get_songs(self,query_params={}, prevRecord = None, nextRecord=None, limit = 25):
         try:
-            LastEvaluatedKey = None
             query = []
             for key in query_params:
                 if key in ['cluster','id','emotion']:
                     query.append((key,'in',query_params[key]))
                 else:
                     query.append((key, '==', query_params[key]))
-            songs = super().list_items(query=query, limit = 25, LastEvaluatedKey=prevRecord)
+            songs = super().list_items(query=query, limit = 25, LastEvaluatedKey=prevRecord, nextRecord = nextRecord)
             return songs
         except:
             print("some error occured in fetching songs")

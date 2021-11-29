@@ -1,6 +1,7 @@
 import boto3
 from .db import DBInstance
 import traceback
+from firebase_admin import firestore
 
 class FirestoreModel:
     def __init__(self, modelName, keyField='id',is_collection_group=False):
@@ -42,17 +43,21 @@ class FirestoreModel:
             print("some error while getting item")
             traceback.print_exc()
     
-    def list_items(self,query=None, LastEvaluatedKey = None, limit = 25):
+    def list_items(self,query=None, LastEvaluatedKey = None,nextRecord = None, limit = 25):
         try:
             cursor = self.model
             if query:
                 for q in query:
                     cursor = self.model.where(*q)
             if LastEvaluatedKey:
-                last_doc = self.model.document(LastEvaluatedKey).get()
                 cursor = cursor.order_by(self.key_field).start_after({ self.key_field: LastEvaluatedKey })
+            elif nextRecord:
+                cursor = cursor.order_by(self.key_field, direction=firestore.Query.DESCENDING).start_after({ self.key_field: nextRecord })
             cursor = cursor.limit(limit)
-            return [record.to_dict() for record in cursor.stream()]
+            records = [record.to_dict() for record in cursor.stream()]
+            if nextRecord:
+                records = list(reversed(records))
+            return records
         except:
             print("some error while getting items")
             traceback.print_exc()
