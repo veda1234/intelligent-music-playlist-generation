@@ -48,7 +48,7 @@ class FirestoreModel:
             cursor = self.model
             if query:
                 for q in query:
-                    cursor = self.model.where(*q)
+                    cursor = cursor.where(*q)
             if LastEvaluatedKey:
                 cursor = cursor.order_by(self.key_field).start_after({ self.key_field: LastEvaluatedKey })
             elif nextRecord:
