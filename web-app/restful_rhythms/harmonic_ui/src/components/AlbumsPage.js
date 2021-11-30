@@ -19,25 +19,40 @@ export default function ServerPaginationGrid() {
   const [loading, setLoading] = React.useState(false);
   const [items, setItems] = React.useState([]);
   const [pageEnd, setPageEnd] = React.useState([]);
+  const [prevItem, setPrevItem] = React.useState(null);
+  const [nextItem, setNextItem] = React.useState(null);
+  const [prevPage, setPrevPage] = React.useState(0);
+  
+  function handlePageChange(newPage) {
+        if(newPage > prevPage) {
+          setPrevItem(items[items.length - 1].id)
+          setNextItem(null)
+        } else {
+          setNextItem(items[0].id)
+          setPrevItem(null)
+        }
+      setPage(newPage)
+      setPrevPage(page)
+  }
 
   async function loadServerRows() {
-    fetch("api/albums")
-      .then(res => res.json())
-      .then(
-        (result) => {
-          console.log(result)
-          result = result.map((item)=>({
-            artists : item.artists,
-            id : item.id,
-            name : item.name,
-            release_date : item.release_date,
-            release_date_precision : item.release_date_precision,
-            })
-        )
-          
-          setItems(result); 
-        }
-      )
+    let url = new URL(`http://${window.location.hostname}:8000/api/albums`)
+    if (prevItem) {
+      url.searchParams.append('prevId', prevItem)
+    } else if(nextItem) {
+      url.searchParams.append('nextId', nextItem)   
+    }
+    let result = await fetch(url)
+    result = await result.json()
+    result = result.map((item)=>({
+      artists : item.artists,
+      id : item.id,
+      name : item.name,
+      release_date : item.release_date,
+      release_date_precision : item.release_date_precision,
+      })
+  )
+    return result;
   }
 
   React.useEffect(() => {
@@ -46,19 +61,20 @@ export default function ServerPaginationGrid() {
     (async () => {
       setLoading(true);
 
-    // loadServerRows();
+    const newItems = await loadServerRows();
 
       if (!active) {
         return;
       }
-
+      setItems(newItems);
       setLoading(false);
     })();
 
     return () => {
       active = false;
     };
-  });
+  },[page]);
+
 
   return (
     <Grid container spacing={3}>
@@ -76,11 +92,11 @@ export default function ServerPaginationGrid() {
           rows={items}
           columns={columns}
           pagination
-          pageSize={5}
+          pageSize={25}
           rowsPerPageOptions={[25]}
-          rowCount={100}
+          rowCount={100000}
           paginationMode="server"
-          onPageChange={(newPage) => setPage(newPage)}
+          onPageChange={(newPage) => handlePageChange(newPage)}
           loading={loading}
         />
         </div>
