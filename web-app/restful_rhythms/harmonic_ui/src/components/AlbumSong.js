@@ -3,6 +3,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Button, CircularProgress, Grid } from '@material-ui/core';
 import Typography from "@material-ui/core/Typography";
 import Box from '@mui/material/Box';
+import NavBar from './navBar';
 
 import SongsGrid from './songsTable';
 
@@ -22,12 +23,9 @@ export default function AlbumSong(props) {
   
   return (
     <Grid container spacing={3}>
-      <Grid item xs={12} align="center">
-      <Box sx={{ p: 3}}>
-        <Typography component="h2" variant="h2">
-          {album.name}
-          </Typography>
-          </Box>
+      <NavBar />
+       <Grid item xs={11} align="center">
+        <p style={{ marginLeft: '4%', fontWeight: 500, fontFamily: '"Roboto","Helvetica","Arial","sans-serif"' }}>Tracks in {album.name}</p>
       </Grid>
       <Grid style={{marginLeft: 30 }}>
       <h4>Artists: </h4> <p>{album.artists.map(artist => artist.name)}</p>

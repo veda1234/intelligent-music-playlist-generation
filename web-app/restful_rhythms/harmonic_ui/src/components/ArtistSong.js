@@ -7,6 +7,7 @@ import {
   Link
 } from "react-router-dom";
 import SongsGrid from './songsTable';
+import NavBar from './navBar';
 
 export default function ArtistSong(props) {
   
@@ -25,12 +26,9 @@ export default function ArtistSong(props) {
   
   return (
     <Grid container spacing={3}>
-      <Grid item xs={12} align="center">
-      <Box sx={{ p: 3}}>
-        <Typography component="h2" variant="h2">
-          Songs of {artist.name}
-          </Typography>
-          </Box>
+      <NavBar />
+      <Grid item xs={11} align="center">
+        <p style={{ marginLeft: '4%', fontWeight: 500, fontFamily: '"Roboto","Helvetica","Arial","sans-serif"' }}>Tracks by {artist.name}</p>
       </Grid>
       <SongsGrid filter={{artist: artist.id}} />
       </Grid>
