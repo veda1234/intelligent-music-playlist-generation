@@ -13,28 +13,32 @@ import os
 import sys
 from functools import reduce
 
-# def get_json_file(load_dict):
-#     with open('audio_test.json', 'w') as f:
-#         json.dump(load_dict, f)
-spark = SparkSession.builder.appName("KMeansClusters").config("setMaster", "local[2]").getOrCreate()
-cur_dir_path = os.path.dirname(os.path.realpath(__file__))
-print(cur_dir_path)
-temp_path = f"{cur_dir_path}/Saved_S3/"
-# Load PCA model
-modelPath = temp_path + "/pca-model"
-loadedModel = PCAModel.load(modelPath)
+# # def get_json_file(load_dict):
+# #     with open('audio_test.json', 'w') as f:
+# #         json.dump(load_dict, f)
+# spark = SparkSession.builder.appName("KMeansClusters").config("setMaster", "local[2]").getOrCreate()
+# cur_dir_path = os.path.dirname(os.path.realpath(__file__))
+# print(cur_dir_path)
+# temp_path = f"{cur_dir_path}/Saved_S3/"
+# # Load PCA model
+# modelPath = temp_path + "/pca-model"
+# loadedModel = PCAModel.load(modelPath)
 
-modelPath_kmeans = temp_path + "/kmeans-model"
-load_kmeans_model = KMeansModel.load(modelPath_kmeans)
+# modelPath_kmeans = temp_path + "/kmeans-model"
+# load_kmeans_model = KMeansModel.load(modelPath_kmeans)
 
 
 
-def get_user_audio_features(audio_features):
-    # get_json_file(audio_features_dict)
-    # file_name = 'audio_test.json'
+def get_user_audio_features_working(audio_features_dict):
+    spark = SparkSession\
+            .builder\
+            .appName("KMeansClusters")\
+            .config("setMaster", "local[2]")\
+            .getOrCreate()
 
     # Location of saved models
-    # path = "dataset_construction/dataset/"
+    temp_path = "Saved_S3/"
+    path = "dataset_construction/dataset/"
 
     # def get_user_audio_features(filenames):
     # filename = filenames # change accordingly
@@ -43,15 +47,22 @@ def get_user_audio_features(audio_features):
 
 
     # Test data procedure
-    test_df = spark.createDataFrame([Row(**audio_features)]) # change accordingly
+    test_df = spark.read.option("multiline", "true").json(audio_features_dict) # change accordingly
     
     ids_of_users = test_df.select('id')
     test_df = test_df.drop('id','duration_ms','time_signature')
     test_dataset = test_df.rdd.map(lambda x:(Vectors.dense(x), 0)).toDF(["features"])
     test_dataset = test_dataset.drop('_2')
 
+    # Load PCA model
+    modelPath = temp_path + "/pca-model"
+    loadedModel = PCAModel.load(modelPath)
     pca_test_dataset = loadedModel.transform(test_dataset)
     count_of_rows = pca_test_dataset.count()
+
+    # Load KMeans model
+    modelPath_kmeans = temp_path + "/kmeans-model"
+    load_kmeans_model = KMeansModel.load(modelPath_kmeans)
 
     # Getting cluster centers of KMeans 
     centers = load_kmeans_model.clusterCenters()
@@ -68,46 +79,28 @@ def get_user_audio_features(audio_features):
             list2 = centers[j].tolist()
             squares = [(p-q) ** 2 for p, q in zip(list1, list2)]
             squares = sum(squares) ** .5
+            print(squares)
             if squares < min_square :
                 cluster_id = j
                 min_square = squares
         cluster_ids.append(cluster_id)
     cluster_ids = spark.createDataFrame(cluster_ids, IntegerType())
-    return generate_cluster_ids(cluster_ids,ids_of_users)
+    return cluster_ids,ids_of_users    
 
-def generate_cluster_ids(cluster_ids,ids_of_users): 
+
+if __name__ == '__main__':
+#     get_json_file(load_dict)
+    cluster_ids,ids_of_users = get_user_audio_features_working('audio_test.json')
     cluster_ids = cluster_ids.toPandas()
     cluster_ids = cluster_ids.rename(columns={"value":"cluster_id"})
     final_df = pd.concat([cluster_ids,ids_of_users.toPandas()],axis=1)
     final = final_df.to_json(orient='index')
     final = json.loads(final)
     load_dict = {}
-    for f in final:
-        return final[f]['cluster_id']
-        # load_dict[final[f]["id"]] = final[f]["cluster_id"]
+    for f in final: 
+        load_dict[final[f]["id"]] = final[f]["cluster_id"]
+    # with open('user_cluster_ids.pkl', 'wb') as f:
+    #     pickle.dump(load_dict, f)
     # with open('user_cluster_ids.pkl', 'rb') as f:
     #     data = pickle.load(f)
-    # return load_dict
-
-
-
-# if __name__ == '__main__':
-#     # with open("audio_test.json", "r") as f:
-#     #     load_dict = json.load(f)
-
-#     # get_json_file(load_dict)
-#     cluster_ids,ids_of_users = get_user_audio_features_working('audio_test.json')
-#     cluster_ids = cluster_ids.toPandas()
-#     cluster_ids = cluster_ids.rename(columns={"value":"cluster_id"})
-#     final_df = pd.concat([cluster_ids,ids_of_users.toPandas()],axis=1)
-#     final = final_df.to_json(orient='index')
-#     final = json.loads(final)
-#     load_dict = {}
-#     for f in final: 
-#         load_dict[final[f]["id"]] = final[f]["cluster_id"]
-#     with open('user_cluster_ids.pkl', 'wb') as f:
-#         pickle.dump(load_dict, f)
-#     with open('user_cluster_ids.pkl', 'rb') as f:
-#         data = pickle.load(f)
-#     print(data)
-    
+    print(load_dict)
