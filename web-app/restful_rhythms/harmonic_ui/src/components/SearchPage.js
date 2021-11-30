@@ -3,13 +3,6 @@ import { Button, Grid } from '@material-ui/core';
 import Typography from "@material-ui/core/Typography";
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
-import TextField from '@mui/material/TextField';
-import { render } from "react-dom";
-import {
-  Route,
-  BrowserRouter,
-  Link
-} from "react-router-dom";
 
 export default function SearchPage(){
     const [searchQuery, setSearchQuery] = useState('');
@@ -17,10 +10,10 @@ export default function SearchPage(){
 
     const columns = [
         { field: 'id', headerName: 'ID', width: 150 , hide:true},
-        { field: 'name', headerName: 'Song Name', width: 300, headerAlign: 'center'},
-        { field: 'artists', headerName: 'Artist Name', width: 300},
+        { field: 'name', headerName: 'Song Name', width: 400, headerAlign: 'center'},
+        { field: 'artists', headerName: 'Artist Name', width: 300, headerAlign: 'center'},
         { field: 'uri', headerName: 'Track ID', width: 300, hide:true},
-        { field: 'is_present', headerName: 'Is already present', width: 300,hide:true},
+        { field: 'is_present', headerName: 'Is already present', width: 300,headerAlign: 'center',hide:true},
         {
             field: "Add to list",
             width:300,
@@ -30,7 +23,8 @@ export default function SearchPage(){
                   variant="contained"
                   color="secondary"
                   onClick={(event) => {
-                    addToList(event, items)
+                    // send selected track id here
+                    addToList(cellValues.row.id)
                   }}
                 >
                   Add to list
@@ -40,12 +34,26 @@ export default function SearchPage(){
           }
       ];
 
-    async function addToList(e, items){
-        e.preventDefault();
-        track_id = items.uri.split(":")[2]
-        let url = new URL(`http://${window.location.hostname}:8000/api/songs?track_id=${track_id}`)
-        let added_or_not = await fetch(url);
-        added_or_not = await added_or_not.json()
+    async function addToList(track_id){
+        // for (let i = 0; i < items.length; i++) {
+        //     console.log(items[i].uri.split(":")[2])
+        //   }
+        // console.log(items[0].uri.split(":")[2])
+        // e.preventDefault();
+        // let track_id = items[0].uri.split(":")[2]
+        let url = new URL(`http://${window.location.hostname}:8000/api/songs/`)
+        let added_or_not = await fetch(url, 
+            {
+                method: 'POST',
+                headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    track_id: track_id,
+                })
+              })
+        added_or_not = await added_or_not.text()
         console.log(added_or_not)
     }
 
@@ -57,12 +65,17 @@ export default function SearchPage(){
         result = result.map((item)=>({
             name: item.name,
             id : item.id,
-            artists : item.artists[0].name,
+            // artists : for (let i = 0; i < item.artists.length; i++) {
+            //     item.artists[i].name
+            // },
+            // artists : item.artists.map((i)=>{i.name}),
+            artists : item.artists.map((artist)=>artist.name),
             is_present : item.is_already_present,
             uri : item.uri
             })
           )
         setItems(result)
+        console.log(result)
         return false
 
     }
@@ -76,7 +89,7 @@ export default function SearchPage(){
           </Box>
       </Grid>
       <Grid item xs={12}>
-      <Box sx={{ p: 3}}>
+      <Box sx={{ m: 3}}>
       <form
             method="get"
             onSubmit={searchTheQuery}
@@ -98,10 +111,13 @@ export default function SearchPage(){
         </Grid>
         <Grid item xs={9}>
         <div style={{ display: 'flex', height: '100%' }}>
-        <div style={{ height: 400, marginLeft: 200,flexGrow: 1 }}  >
+        <div style={{ height: 400, marginLeft: 240,flexGrow: 1 }}  >
         <DataGrid className="center"
           rows={items}
           columns={columns}
+          pageSize={25}
+          rowsPerPageOptions={[25]}
+          rowCount={25}
         />
         </div>
         </div>
