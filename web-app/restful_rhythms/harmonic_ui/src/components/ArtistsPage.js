@@ -8,9 +8,7 @@ import Box from '@mui/material/Box';
 export default function ServerPaginationGrid() {
   
   const columns = [
-    { field: 'id', headerName: 'ID', width: 150 , hide:true},
-    { field: 'name', headerName: 'Artist', width: 150, headerAlign: 'center'},
-    { field: 'track_id', headerName: 'Track ID', width: 150 , hide:true}
+    { field: 'name', headerName: 'Artist', width: 1000, filterable: false, sortable: false },
   ];
 
   const [page, setPage] = React.useState(0);
@@ -43,8 +41,7 @@ export default function ServerPaginationGrid() {
     result = await result.json()
     result = result.map((item)=>({
             id : item.id,
-            name : item.name,
-            track_id : item.track_id,
+            name : item.name
             })
         )
     return result;
@@ -70,25 +67,30 @@ export default function ServerPaginationGrid() {
     };
   },[page]);
 
+  function handleClick(val) {
+    window.location.href = `/artist/${val.row.id}`;
+  }
+
   return (
     <Grid container spacing={3}>
       <Grid item xs={12} align="center">
       <Box sx={{ p: 3}}>
         <Typography component="h2" variant="h2">
-          Artists
+          Artists and Bands
           </Typography>
           </Box>
       </Grid>
-      <Grid item xs={10} align="center">
-      <div style={{ display: 'flex', height: '100%' }}>
-      <div style={{ height: 400, marginLeft: 200, flexGrow: 1 }}  >
+      <Grid item xs={12} align="center">
+      <div style={{ display: 'flex', height: '80vh' }}>
+      <div style={{ height: '100%', flexGrow: 1 }}  >
         <DataGrid className="center"
           rows={items}
           columns={columns}
           pagination
+          onCellClick={handleClick}
           pageSize={25}
           rowsPerPageOptions={[25]}
-          rowCount={100000}
+          rowCount={Math.round((Math.random() * 200000))}
           paginationMode="server"
           onPageChange={(newPage) => handlePageChange(newPage)}
           loading={loading}

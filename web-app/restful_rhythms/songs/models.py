@@ -10,8 +10,10 @@ class TrackClass(FirestoreModel):
         try:
             query = []
             for key in query_params:
-                if key in ['cluster','id','emotion']:
+                if key == 'id':
                     query.append((key,'in',query_params[key]))
+                elif key == 'artist_id':
+                    query.append((key, 'array_contains', query_params[key]))
                 else:
                     query.append((key, '==', query_params[key]))
             songs = super().list_items(query=query, limit = 25, LastEvaluatedKey=prevRecord, nextRecord = nextRecord)

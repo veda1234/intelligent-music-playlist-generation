@@ -10,9 +10,8 @@ export default function ServerPaginationGrid() {
   const columns = [
     { field: 'artists', headerName: 'Artist', headerAlign: 'center',width: 150 },
     { field: 'id', headerName: 'ID', width: 150, headerAlign: 'center', hide:true},
-    { field: 'name', headerName: 'Name', width: 400,headerAlign: 'center',},
+    { field: 'name', headerName: 'Name', width: 700,headerAlign: 'center',},
     { field: 'release_date', headerName: 'Release Date',headerAlign: 'center', width: 170},
-    { field: 'release_date_precision', headerName: 'Release Precision Date',headerAlign: 'center', width: 230}
   ];
 
   const [page, setPage] = React.useState(0);
@@ -45,7 +44,8 @@ export default function ServerPaginationGrid() {
     let result = await fetch(url)
     result = await result.json()
     result = result.map((item)=>({
-      artists : item.artists,
+      artists : item.artists.map(artist => artist.name),
+      artist_id: item.artists[0].id,
       id : item.id,
       name : item.name,
       release_date : item.release_date,
@@ -75,6 +75,15 @@ export default function ServerPaginationGrid() {
     };
   },[page]);
 
+  function handleClick(val) {
+    console.log(val);
+    if(val.field == 'artists'){
+      window.location.href = `/artist/${val.row.artist_id}`;
+    }
+    else {
+      window.location.href = `/album/${val.row.id}`;  
+    }
+  }
 
   return (
     <Grid container spacing={3}>
@@ -85,16 +94,17 @@ export default function ServerPaginationGrid() {
           </Typography>
           </Box>
       </Grid>
-      <Grid item xs={10} align="center">
-      <div style={{ display: 'flex', height: '100%' }}>
-      <div style={{ height: 400, marginLeft: 200, flexGrow: 1 }}  >
+      <Grid item xs={12} align="center">
+      <div style={{ display: 'flex', height: '80vh' }}>
+      <div style={{ height: '100%', flexGrow: 1 }}  >
         <DataGrid className="center"
           rows={items}
           columns={columns}
           pagination
           pageSize={25}
+          onCellClick={handleClick}
           rowsPerPageOptions={[25]}
-          rowCount={100000}
+          rowCount={Math.round((Math.random() * 200000))}
           paginationMode="server"
           onPageChange={(newPage) => handlePageChange(newPage)}
           loading={loading}

@@ -11,6 +11,7 @@ from rest_framework import status
 sys.path.append('../../')
 from lyric_emotion_detection import emotion_fetcher
 from cluster_detection import get_user_cluster_ids
+import json
 
 
 def add_song_to_user(session_id, track_id):
@@ -110,16 +111,16 @@ class SongView(viewsets.ViewSet):
                 del query_params['nextId']
             param_keys = list(query_params.keys())
             for q in param_keys:
-                if q in ['cluster','emotion']:
-                    query_params[q] = query_params[q][1:-1].split(',')
                 if q == 'cluster':
-                    query_params[q] = [int(val) for val in query_params[q]]
+                    query_params[q] = int(query_params[q])
+                if q == 'emotion':
+                    query_params[q] = query_params[q].lower()
                 if q == 'by_user':
                     curr_user_data = execute_spotify_api_request(request.session.session_key, '/me')
                     user_id = curr_user_data['id']
                     song_ids = UserTrack.get_user_songs(user_id)
                     del query_params['by_user']
-                    query_params['id'] = song_ids                
+                    query_params['id'] = song_ids  
             songs = Track.get_songs(query_params=query_params, prevRecord = prevId, nextRecord=nextId)
             song_responses = []
             album_ids = [song.get("album_id") for song in songs]
