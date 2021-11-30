@@ -114,13 +114,20 @@ export default function ServerPaginationGrid() {
             </Button>
           </Typography>
           </Grid>
-          <Grid item xs={12} align="center">
+      <Grid item xs={12} align="center">
           <Typography component="h4" variant="h4">
           <Button color="primary" variant="contained" to="/albums" component={Link}>
           Album's Page
-            </Button>
+          </Button>
           </Typography>
-          </Grid>
+      </Grid>
+      <Grid item xs={12} align="center">
+          <Typography component="h4" variant="h4">
+          <Button color="primary" variant="contained" to="/search" component={Link}>
+          Search for songs
+          </Button>
+          </Typography>
+      </Grid>
       </Grid>
   );
 }

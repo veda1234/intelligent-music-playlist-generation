@@ -10,6 +10,7 @@ import WelcomePage from "./WelcomePage";
 import HomePage from "./HomePage";
 import ArtistsPage from "./ArtistsPage";
 import AlbumsPage from "./AlbumsPage";
+import SearchPage from "./SearchPage"
 
 export default class App extends Component {
   constructor(props) {
@@ -25,6 +26,8 @@ export default class App extends Component {
       <Route path="/welcome" exact render={() => <WelcomePage/>}></Route>
       <Route path="/artists" exact render={() => <ArtistsPage/>}></Route>
       <Route path="/albums" exact render={() => <AlbumsPage/>}></Route>
+      <Route path="/search" exact render={() => <SearchPage/>}></Route>
+
       </BrowserRouter>
       </div>
     );

@@ -12,7 +12,6 @@ sys.path.append('../../')
 from lyric_emotion_detection import emotion_fetcher
 from cluster_detection import get_user_cluster_ids
 
-
 def add_song_to_user(session_id, track_id):
     curr_user_data = execute_spotify_api_request(session_id, '/me')
     user_id = curr_user_data['id']
