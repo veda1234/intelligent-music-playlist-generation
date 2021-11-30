@@ -17,7 +17,7 @@ if __name__ == '__main__':
     i = 0
     r = None
     try:
-        for record in db.collection('tracks').order_by('id').start_at({ 'id': '0NeJjNlprGfZpeX2LQuN6c' }).stream():            
+        for record in db.collection('tracks').order_by('id').start_at({ 'id': '10AROvgxHe4dzZ8Cxh6Yay' }).stream():            
             r  = record.to_dict()
             for artist in r['artists']:
                 artist_ref.document(artist['id']).set(artist)
