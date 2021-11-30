@@ -12,6 +12,7 @@ import ArtistsPage from "./ArtistsPage";
 import AlbumsPage from "./AlbumsPage";
 import AlbumSong from './AlbumSong';
 import ArtistSong from './ArtistSong';
+import SearchPage from "./SearchPage"
 
 export default class App extends Component {
   constructor(props) {
@@ -29,7 +30,8 @@ export default class App extends Component {
       <Route path="/albums" exact render={() => <AlbumsPage/>}></Route>
       <Route path="/artist/:id" exact render={({match}) => <ArtistSong id={match.params.id} />}></Route>
       <Route path="/album/:id" exact render={({match}) => <AlbumSong id={match.params.id} />}></Route>
-      
+      <Route path="/search" exact render={() => <SearchPage/>}></Route>
+
       </BrowserRouter>
       </div>
     );

@@ -9,5 +9,6 @@ urlpatterns = [
     path('artists', index_with_authentication,name='artists'),
     path('albums', index_with_authentication,name='albums'),
     path('artist/<id>', index_with_authentication, name='artist'),
-    path('album/<id>', index_with_authentication, name='album') 
+    path('album/<id>', index_with_authentication, name='album'),
+    path('search', index_with_authentication,name='search')    
 ]
