@@ -109,7 +109,7 @@ export default function SongsGrid(props) {
       url.searchParams.append('emotion', filter.emotion)
     }
     if(filter.cluster) {
-      url.searchParams.append('cluster', filter.cluster)
+      url.searchParams.append('cluster', filter.cluster - 1)
     }
     if(filter.artist) {
       url.searchParams.append('artist_id', filter.artist)
@@ -125,7 +125,7 @@ export default function SongsGrid(props) {
       artists : item.artists ,
       duration_minutes : item.duration_minutes ,
       preview_url : item.preview_url , 
-      cluster : item.cluster,
+      cluster : item.cluster + 1,
       emotion : item.emotion,
       })
     )
