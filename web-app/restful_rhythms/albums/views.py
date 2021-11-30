@@ -8,9 +8,7 @@ from rest_framework import status
 
 def format_album(album):
     artists = album.get("artists")
-    if artists:
-        artists = [artist.get("name") for artist in artists]
-    else:
+    if not artists:
         artists = []
     album_response = {
         "name": album.get("name"),
@@ -45,4 +43,18 @@ class AlbumView(viewsets.ViewSet):
             print("some error occured while fetching albums")
             print(traceback.print_exc())
             return Response({"error" : traceback.format_exc() }, status=500)
-        
+    
+    def retrieve(self, request, pk=None):
+        try:
+            is_authenticated = is_spotify_authenticated(
+                self.request.session.session_key)
+            if not is_authenticated:
+                return Response({'error' : 'not authenticated' }, status=status.HTTP_401_UNAUTHORIZED)
+            album = Album.get_item(pk)
+            if album == None:
+                return Response({"error": "album not found" }, status=404)
+            return Response(album)
+        except:
+            print(f"some error occured while fetching song for id {pk}")
+            print(traceback.print_exc())
+            return Response({"error" : traceback.format_exc() }, status=500)

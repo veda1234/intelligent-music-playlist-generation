@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from songs.models import Track
+from .models import Artist
 from rest_framework.response import Response
 import traceback
 import sys
@@ -22,14 +22,24 @@ class ArtistView(viewsets.ViewSet):
             if 'nextId' in query_params:
                 nextId = query_params['nextId']
                 del query_params['nextId']
-            songs = Track.get_songs(prevRecord = prevId, nextRecord = nextId)
-            artist_responses = []
-            for song in songs:
-                song_response = song['artists'][0]
-                song_response['track_id'] = song['id'] 
-                artist_responses.append(song_response)
-            return Response(artist_responses)
+            artists = Artist.get_artists(prevRecord = prevId, nextRecord = nextId)
+            return Response(artists)
         except:
             print("some error occured while fetching songs")
+            print(traceback.print_exc())
+            return Response({"error" : traceback.format_exc() }, status=500)
+        
+    def retrieve(self, request, pk=None):
+        try:
+            is_authenticated = is_spotify_authenticated(
+                self.request.session.session_key)
+            if not is_authenticated:
+                return Response({'error' : 'not authenticated' }, status=status.HTTP_401_UNAUTHORIZED)
+            artist = Artist.get_item(pk)
+            if artist == None:
+                return Response({"error": "artist not found" }, status=404)
+            return Response(artist)
+        except:
+            print(f"some error occured while fetching song for id {pk}")
             print(traceback.print_exc())
             return Response({"error" : traceback.format_exc() }, status=500)
