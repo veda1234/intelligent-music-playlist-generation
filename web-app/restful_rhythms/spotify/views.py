@@ -5,7 +5,7 @@ from requests import Request, post
 from rest_framework import status
 from rest_framework.response import Response
 from .util import update_or_create_user_tokens, is_spotify_authenticated, execute_spotify_api_request
-
+from songs.models import Track
 
 class AuthURL(APIView):
     def get(self, request, format=None):
@@ -54,6 +54,10 @@ class IsAuthenticated(APIView):
             self.request.session.session_key)
         return Response({'status': is_authenticated}, status=status.HTTP_200_OK)
 
+def chunks(l, n):
+    n = max(1, n)
+    return (l[i:i+n] for i in range(0, len(l), n))
+
 class SearchView(APIView):
     def get(self, request, format=None):
         is_authenticated = is_spotify_authenticated(
@@ -71,4 +75,13 @@ class SearchView(APIView):
         if 'page_number' in query_params:
             spotify_search_params['offset'] = 25*(int(query_params['page_number']) - 1)
         response = execute_spotify_api_request(self.request.session.session_key, '/search',spotify_search_params)
+        tracks = response['tracks']['items']
+        track_ids = [track['id'] for track in tracks]
+        track_id_sets = chunks(track_ids, 10)
+        present_Tracks = []
+        for track_id_set in track_id_sets:
+            present_Tracks.extend(Track.get_songs(query_params={ 'id' : track_id_set }))
+        present_Track_set = set([track['id'] for track in present_Tracks])
+        for track in tracks:
+            track['is_already_present'] = (track['id'] in present_Track_set)
         return Response(response['tracks']["items"])
