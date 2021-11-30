@@ -29,7 +29,7 @@ export default function SongsGrid(props) {
     { field: 'emotion', headerName: 'Emotion detected', width: 190, headerAlign: 'center'},
     {   field: 'preview_url', 
         headerName: 'Preview', 
-        width: 157, 
+        width: 150, 
         headerAlign: 'center',
         renderCell: (cellValues) => {
             if(cellValues.value) {
@@ -38,6 +38,21 @@ export default function SongsGrid(props) {
             return (<p></p>)
         }
     },
+    {
+        field: 'is_present',
+        headerName: '  ',
+        width: 150,
+        headerAlign: 'center',
+        renderCell: (cellValues) =>  {
+          if(!cellValues.value){
+            return (<Button onClick={(ev) => addToList(cellValues.row.id)} 
+            variant="text" color="primary">+ ADD</Button>);
+          } else {
+            return (<Button onClick={(ev) => removeFromList(cellValues.row.id)} 
+            variant="text" color="primary">- REMOVE</Button>);
+          }
+        }
+    }
   ].map(column => ({ ...column,filterable: false, sortable: false }));
   
 
@@ -63,6 +78,44 @@ export default function SongsGrid(props) {
     boxShadow: 24,
     p: 4,
   };
+
+  function addToList(track_id) {
+    setLoading(true);
+    fetch('/api/songs/add_to_list/', {
+      method: 'POST',
+      body: JSON.stringify({ track_id }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then(res => res.text()).then(res => {
+        const curr_items = items.map((item) => {
+          if(item.id == track_id) return {
+            ...item,
+            is_present: true,
+          } 
+          return item
+        })
+        setItems(curr_items)
+        setLoading(false);
+    })
+  }
+
+  function removeFromList(track_id) {
+    setLoading(true);
+    fetch(`/api/songs/${track_id}/remove_from_list/`, {
+      method: 'DELETE',
+    }).then(res => res.text()).then(res => {
+        const curr_items = items.map((item) => {
+          if(item.id == track_id) return {
+            ...item,
+            is_present: false,
+          } 
+          return item
+        })
+        setItems(curr_items)
+        setLoading(false);
+    })
+  }
 
   function handlePageChange(newPage) {
         if(newPage > prevPage) {
@@ -132,7 +185,6 @@ export default function SongsGrid(props) {
     }
     let result = await fetch(url);
     result = await result.json();
-    console.log(result)
     result = result.map((item)=>({
       name: item.name,
       id : item.id ,
@@ -143,6 +195,7 @@ export default function SongsGrid(props) {
       duration: `${item.duration_minutes}:${item.duration_seconds}` ,
       preview_url : item.preview_url , 
       cluster : item.cluster + 1,
+      is_present: item.is_present,
       emotion : item.emotion,
       })
     )
@@ -208,12 +261,13 @@ export default function SongsGrid(props) {
       window.location.href = `/artist/${val.row.artist_id}`;
     else if(val.field == 'album')
       window.location.href = `/album/${val.row.album_id}`;
-    else if(val.field != 'preview_url')
+    else if(val.field != 'preview_url' && val.field != 'is_present')
     window.location.href = `/track/${val.row.id}`;
     
   }
 
   function exportToPlaylist() {
+    setLoading(true);
     let track_ids = items.map(item => item.id)
     let name = 'EmotiTune'
     console.log(filter)
@@ -236,6 +290,7 @@ export default function SongsGrid(props) {
         'Content-Type': 'application/json',
       },
     }).then(res => res.json()).then((playlist_id) => {
+      setLoading(false);
       window.open(`https://open.spotify.com/playlist/${playlist_id}/`,'blank_')     
     })
   }

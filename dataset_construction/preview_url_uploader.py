@@ -16,9 +16,10 @@ def write_to_S3(filename):
     object_array = json.load(open(filename, 'r'))
     for obj in object_array:
         if obj['preview_url']:
-            resp = requests.get(obj['preview_url'])
-            open(TEST_AUDIO_PATH, 'wb').write(resp.content)
-            s3_client.upload_file(TEST_AUDIO_PATH, 'emoti-tune', '{0}.mp3'.format(obj['id']))
+            if count >= 401:
+                resp = requests.get(obj['preview_url'])
+                open(TEST_AUDIO_PATH, 'wb').write(resp.content)
+                s3_client.upload_file(TEST_AUDIO_PATH, 'emoti-tune', '{0}.mp3'.format(obj['id']))
             count += 1
             if count == 1500:
                 break

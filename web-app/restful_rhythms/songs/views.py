@@ -26,7 +26,7 @@ def add_song_to_user(session_id, track_id):
         user_tracks['songs'].append(track_id)
     UserTrack.write_item(user_tracks)
 
-def format_song(song, albums):
+def format_song(song, albums, user_tracks = set()):
     artists = song.get("artists")
     if not artists:
         artists = []
@@ -57,6 +57,7 @@ def format_song(song, albums):
     }
     if albums.get(song.get('album_id')):
         song_response["album"] = albums.get(song.get("album_id")).get("name")
+    song_response['is_present'] = (song['id'] in user_tracks)
     return song_response
 
 def construct_song(song):
@@ -101,6 +102,8 @@ class SongView(viewsets.ViewSet):
             query_params = request.query_params.dict()
             prevId = None
             nextId = None
+            curr_user_data = execute_spotify_api_request(request.session.session_key, '/me')
+            user_id = curr_user_data['id']
             if 'prevId' in query_params:
                 prevId = query_params['prevId']
                 del query_params['prevId']
@@ -114,8 +117,6 @@ class SongView(viewsets.ViewSet):
                 if q == 'emotion':
                     query_params[q] = query_params[q].lower()
                 if q == 'by_user':
-                    curr_user_data = execute_spotify_api_request(request.session.session_key, '/me')
-                    user_id = curr_user_data['id']
                     song_ids = UserTrack.get_user_songs(user_id)
                     del query_params['by_user']
                     query_params['id'] = song_ids  
@@ -123,8 +124,13 @@ class SongView(viewsets.ViewSet):
             song_responses = []
             album_ids = [song.get("album_id") for song in songs]
             albums = Album.get_albums_by_id(album_ids)
+            user_tracks = UserTrack.get_item(user_id)
+            if user_tracks:
+                user_tracks = set(user_tracks['songs'])
+            else:
+                user_tracks = set()
             for song in songs:
-                song_responses.append(format_song(song, albums))
+                song_responses.append(format_song(song, albums, user_tracks))
             return Response(song_responses)
         except:
             print("some error occured while fetching songs")
@@ -212,6 +218,28 @@ class SongView(viewsets.ViewSet):
             if 'track_id' not in request.data:
                 return Response({'error': 'track_id not given' }, status=status.HTTP_400_BAD_REQUEST)
             add_song_to_user(request.session.session_key, request.data['track_id'])
+            return Response("success")
+        except:
+            print(f"some error occured while adding song to user for {request.data}")
+            print(traceback.print_exc())
+            return Response({"error" : traceback.format_exc() }, status=500)
+    
+    @action(detail=True, methods=['delete'])
+    def remove_from_list(self, request,pk=None):
+        try:
+            track_id = pk
+            is_authenticated = is_spotify_authenticated(
+                    self.request.session.session_key)
+            if not is_authenticated:
+                return Response({'error' : 'not authenticated' }, status=status.HTTP_401_UNAUTHORIZED)
+            session_id = request.session.session_key
+            curr_user_data = execute_spotify_api_request(session_id, '/me')
+            user_id = curr_user_data['id']
+            user_tracks = UserTrack.get_item(user_id)
+            if (not user_tracks) or (track_id not in user_tracks['songs']):
+                return Response({ 'error': 'invalid track id' }, status=400)
+            user_tracks['songs'].remove(track_id)
+            UserTrack.write_item(user_tracks)
             return Response("success")
         except:
             print(f"some error occured while adding song to user for {request.data}")
