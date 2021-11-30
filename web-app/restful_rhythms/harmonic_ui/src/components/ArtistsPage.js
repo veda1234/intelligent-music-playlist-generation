@@ -3,12 +3,13 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Button, Grid } from '@material-ui/core';
 import Typography from "@material-ui/core/Typography";
 import Box from '@mui/material/Box';
+import NavBar from './navBar';
 
 
 export default function ServerPaginationGrid() {
   
   const columns = [
-    { field: 'name', headerName: 'Artist', width: 1000, filterable: false, sortable: false },
+    { field: 'name', headerName: 'Artist and Bands', width: 1325, headerAlign: 'center', filterable: false, sortable: false },
   ];
 
   const [page, setPage] = React.useState(0);
@@ -73,13 +74,7 @@ export default function ServerPaginationGrid() {
 
   return (
     <Grid container spacing={3}>
-      <Grid item xs={12} align="center">
-      <Box sx={{ p: 3}}>
-        <Typography component="h2" variant="h2">
-          Artists and Bands
-          </Typography>
-          </Box>
-      </Grid>
+       <NavBar active="Artists" />
       <Grid item xs={12} align="center">
       <div style={{ display: 'flex', height: '80vh' }}>
       <div style={{ height: '100%', flexGrow: 1 }}  >

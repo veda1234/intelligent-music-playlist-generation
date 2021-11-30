@@ -4,6 +4,7 @@ import Typography from "@material-ui/core/Typography";
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import Alert from '@mui/material/Alert';
+import NavBar from "./navBar";
 
 export default function SearchPage(){
     const [searchQuery, setSearchQuery] = useState('');
@@ -76,6 +77,7 @@ export default function SearchPage(){
     }
     return (
     <Grid container spacing={3}>
+      <NavBar active="Import Tracks" />
       <Grid item xs={12}>
       <Box sx={{ p: 2}}>
         <Typography component="h3" variant="h3">

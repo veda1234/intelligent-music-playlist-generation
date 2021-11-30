@@ -3,7 +3,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Button, Grid } from '@material-ui/core';
 import Typography from "@material-ui/core/Typography";
 import Box from '@mui/material/Box';
-
+import NavBar from './navBar';
 
 export default function ServerPaginationGrid() {
   
@@ -76,7 +76,6 @@ export default function ServerPaginationGrid() {
   },[page]);
 
   function handleClick(val) {
-    console.log(val);
     if(val.field == 'artists'){
       window.location.href = `/artist/${val.row.artist_id}`;
     }
@@ -87,15 +86,20 @@ export default function ServerPaginationGrid() {
 
   return (
     <Grid container spacing={3}>
-      <Grid item xs={12} align="center">
+      {/* <Grid item xs={12} align="center">
       <Box sx={{ p: 3}}>
         <Typography component="h2" variant="h2">
           Albums
           </Typography>
           </Box>
       </Grid>
+       */}
+       <NavBar active="Albums" />
+       <Grid item xs={11} align="center">
+        <p style={{ marginLeft: '4%', fontWeight: 500, fontFamily: '"Roboto","Helvetica","Arial","sans-serif"' }}>Albums</p>
+      </Grid>
       <Grid item xs={12} align="center">
-      <div style={{ display: 'flex', height: '80vh' }}>
+      <div style={{ display: 'flex', height: '70vh' }}>
       <div style={{ height: '100%', flexGrow: 1 }}  >
         <DataGrid className="center"
           rows={items}
