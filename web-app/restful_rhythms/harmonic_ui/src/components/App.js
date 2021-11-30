@@ -12,7 +12,8 @@ import ArtistsPage from "./ArtistsPage";
 import AlbumsPage from "./AlbumsPage";
 import AlbumSong from './AlbumSong';
 import ArtistSong from './ArtistSong';
-import SearchPage from "./SearchPage"
+import SearchPage from "./SearchPage";
+import SongFeature from "./SongFeature";
 
 export default class App extends Component {
   constructor(props) {
@@ -31,7 +32,8 @@ export default class App extends Component {
       <Route path="/artist/:id" exact render={({match}) => <ArtistSong id={match.params.id} />}></Route>
       <Route path="/album/:id" exact render={({match}) => <AlbumSong id={match.params.id} />}></Route>
       <Route path="/search" exact render={() => <SearchPage/>}></Route>
-
+      <Route path="/track/:id" exact render={({match}) => <SongFeature id={match.params.id} />}></Route>
+      
       </BrowserRouter>
       </div>
     );

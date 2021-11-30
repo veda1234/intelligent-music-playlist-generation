@@ -65,7 +65,8 @@ class FirestoreModel:
     
     def get_items_by_key(self, keys):
         try:
-            key_query = (self.key_field, 'in', [keys])
+            key_query = (self.key_field, 'in', keys)
+
             records = self.list_items(query=[key_query],limit=100)
             return { record['id'] : record for record in records }
         except:

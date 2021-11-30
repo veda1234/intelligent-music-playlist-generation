@@ -28,9 +28,7 @@ def add_song_to_user(session_id, track_id):
 
 def format_song(song, albums):
     artists = song.get("artists")
-    if artists:
-        artists = [artist.get("name") for artist in artists]
-    else:
+    if not artists:
         artists = []
     duration = song.get("duration")
     duration_dict = {}
@@ -54,10 +52,11 @@ def format_song(song, albums):
         "duration_hours": duration_dict.get('hours'),
         "preview_url": song.get('preview_url'),
         "cluster": song.get('cluster'),
-        "emotion": song.get('emotion')
+        "emotion": song.get('emotion'),
+        "album_id": song.get('album_id'),
     }
     if albums.get(song.get('album_id')):
-        song_response["album"] = albums.get(song.get("album_id")).get("name"),
+        song_response["album"] = albums.get(song.get("album_id")).get("name")
     return song_response
 
 def construct_song(song):
@@ -234,6 +233,7 @@ class SongView(viewsets.ViewSet):
             response = execute_spotify_api_request(session_id, f'/users/{user_id}/playlists',
                 { 'name': query_params.get('name')},post_=True)
             if 'error' in response:
+                print(response)
                 return Response({'error': 'cannot create playlist' },status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             playlist_id = response['id']
             track_uris = []
@@ -243,7 +243,7 @@ class SongView(viewsets.ViewSet):
                 { 'uris': track_uris }, post_=True)
             if 'error' in response:
                 return Response({'error': 'cannot add tracks' },status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            return Response('sucess')
+            return Response(playlist_id)
         except:
             print(f"some error occured while exporting songs for {request.query_params.dict()}")
             print(traceback.print_exc())

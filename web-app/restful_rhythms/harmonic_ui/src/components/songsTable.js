@@ -20,8 +20,9 @@ export default function SongsGrid(props) {
   const columns = [
     { field: 'name', headerName: 'Name', width: 150, headerAlign: 'center'},
     { field: 'id', headerName: 'id', width: 150 , hide:true},
+    { field: 'album', headerName: 'Album', width: 150, headerAlign: 'center'},
     { field: 'artists', headerName: 'Artist', width: 150, headerAlign: 'center'},
-    { field: 'duration_minutes', headerName: 'Duration', width: 150, headerAlign: 'center'},
+    { field: 'duration', headerName: 'Duration', width: 150, headerAlign: 'center'},
     { field: 'preview_url', headerName: 'Preview URL', width: 157, headerAlign: 'center'},
     { field: 'cluster', headerName: 'Cluster Number', width: 180, headerAlign: 'center'},
     { field: 'emotion', headerName: 'Emotion detected', width: 190, headerAlign: 'center'}
@@ -119,11 +120,15 @@ export default function SongsGrid(props) {
     }
     let result = await fetch(url);
     result = await result.json();
+    console.log(result)
     result = result.map((item)=>({
       name: item.name,
       id : item.id ,
-      artists : item.artists ,
-      duration_minutes : item.duration_minutes ,
+      album: item.album,
+      album_id: item.album_id,
+      artist_id: item.artists[0].id,
+      artists: item.artists.map(artist => artist.name),
+      duration: `${item.duration_minutes}:${item.duration_seconds}` ,
       preview_url : item.preview_url , 
       cluster : item.cluster + 1,
       emotion : item.emotion,
@@ -186,6 +191,42 @@ export default function SongsGrid(props) {
     };
   },  [page, openFilter]);
 
+  function handleClick(val) {
+    if(val.field == 'artists')
+      window.location.href = `/artist/${val.row.artist_id}`;
+    else if(val.field == 'album')
+      window.location.href = `/album/${val.row.album_id}`;
+    else
+    window.location.href = `/track/${val.row.id}`;
+    
+  }
+
+  function exportToPlaylist() {
+    let track_ids = items.map(item => item.id)
+    let name = 'VCMusic'
+    console.log(filter)
+    if(filter.cluster && (filter.cluster > 0))
+      name += `_${filter.cluster}`
+    if(filter.emotion && (filter.emotion != 'All'))
+      name += `_${filter.emotion}`
+    if(filter.artist) {
+      let artist = items[0].artists
+      name += `_${artist}`
+    }
+    if(filter.album) {
+      let album = items[0].album
+      name += `_${album}`
+    }
+    fetch('/api/songs/export/', {
+      method: 'POST',
+      body: JSON.stringify({ track_ids, name }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then(res => res.json()).then((playlist_id) => {
+      window.open(`https://open.spotify.com/playlist/${playlist_id}/`,'blank_')     
+    })
+  }
   return (
     <Grid container spacing={3}>
       <Modal
@@ -223,16 +264,20 @@ export default function SongsGrid(props) {
          </RadioGroup>
         </Box>
       </Modal>
-      <Button onClick={handleFilterOpen}>Filter</Button>
-     <Grid item xs={12} align="center">
+     <Grid item xs={10} align="center">
       <div style={{ display: 'flex', height: '100%', width: "100%" }}>
-      <div style={{ height: '60vh', flexGrow: 1 }}  >
+      <div style={{ height: 300, marginLeft: 300, flexGrow: 1 }}  >
+        <FormGroup row>
+      <Button onClick={handleFilterOpen}>Filter</Button>
+      <Button onClick={exportToPlaylist} style={{ visibility: (filter.by_user && items.length > 0 && (!openFilter)) ? 'visible' : 'hidden' }}>Create Playlist</Button>
+      </FormGroup>
         <DataGrid className="center"
           rows={items}
           columns={columns}
           pagination
           pageSize={25}
           rowsPerPageOptions={[25]}
+          onCellClick={handleClick}
           rowCount={filter.by_user ? 20 : Math.round((Math.random() * 200000))} // this is actually dummy count
           paginationMode="server"
           onPageChange={(newPage) => handlePageChange(newPage)}

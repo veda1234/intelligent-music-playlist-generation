@@ -4,18 +4,16 @@ import { Button, CircularProgress, Grid } from '@material-ui/core';
 import Typography from "@material-ui/core/Typography";
 import Box from '@mui/material/Box';
 
-import SongsGrid from './songsTable';
-
 export default function AlbumSong(props) {
-  const [album, setAlbum] = React.useState(null);
+  const [track, setTrack] = React.useState(null);
 
-  if(!album)
+  if(!track)
   {
     (async () => {
-      let url = new URL(`http://${window.location.hostname}:8000/api/albums/${props.id}`)
+      let url = new URL(`http://${window.location.hostname}:8000/api/songs/${props.id}`)
       let result = await fetch(url);
       result = await result.json();
-      setAlbum(result);
+      setTrack(result);
     })();
     return (<CircularProgress style={{ position: 'absolute', top: '50%', left: '50%' }}/>);   
   }
@@ -25,15 +23,20 @@ export default function AlbumSong(props) {
       <Grid item xs={12} align="center">
       <Box sx={{ p: 3}}>
         <Typography component="h2" variant="h2">
-          {album.name}
+          {track.name}
           </Typography>
           </Box>
       </Grid>
       <Grid style={{marginLeft: 30 }}>
-      <h4>Artists: </h4> <p>{album.artists.map(artist => artist.name)}</p>
-      <h4>Release date: </h4> <p>{album.release_date}</p>
+      <h4>Artists: </h4> <p>{track.artists.map(artist => artist.name)}</p>
+      <h4>Duration: </h4> <p>{`${track.duration_minutes}:${track.duration_seconds}`}</p>
+      <h4>Album: </h4> <p>{track.album}</p>
+      <h4>Play:</h4> <p>{track.preview_url}</p>
+      <h4>Cluster:</h4> <p>{track.cluster}</p>
+      <h4>Emotion:</h4> <p>{track.emotion}</p>
+      <h4>Audio Features:</h4> <p>{JSON.stringify(track.audio_features)}</p>
+      <h4>Lyrics:</h4> <p>{track.lyrics}</p>
       </Grid>
-      <SongsGrid filter={{album: album.id}} />
       </Grid>
   );
 }
