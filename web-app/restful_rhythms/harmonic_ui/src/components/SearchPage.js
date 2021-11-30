@@ -3,10 +3,12 @@ import { Button, Grid } from '@material-ui/core';
 import Typography from "@material-ui/core/Typography";
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
+import Alert from '@mui/material/Alert';
 
 export default function SearchPage(){
     const [searchQuery, setSearchQuery] = useState('');
     const [items, setItems] = React.useState([]);
+    const [loading, setLoading] = React.useState(false);
 
     const columns = [
         { field: 'id', headerName: 'ID', width: 150 , hide:true},
@@ -35,13 +37,8 @@ export default function SearchPage(){
       ];
 
     async function addToList(track_id){
-        // for (let i = 0; i < items.length; i++) {
-        //     console.log(items[i].uri.split(":")[2])
-        //   }
-        // console.log(items[0].uri.split(":")[2])
-        // e.preventDefault();
-        // let track_id = items[0].uri.split(":")[2]
         let url = new URL(`http://${window.location.hostname}:8000/api/songs/`)
+        setLoading(true);
         let added_or_not = await fetch(url, 
             {
                 method: 'POST',
@@ -54,7 +51,9 @@ export default function SearchPage(){
                 })
               })
         added_or_not = await added_or_not.text()
+        setLoading(false);
         console.log(added_or_not)
+        return added_or_not
     }
 
     async function searchTheQuery(e) {
@@ -65,10 +64,6 @@ export default function SearchPage(){
         result = result.map((item)=>({
             name: item.name,
             id : item.id,
-            // artists : for (let i = 0; i < item.artists.length; i++) {
-            //     item.artists[i].name
-            // },
-            // artists : item.artists.map((i)=>{i.name}),
             artists : item.artists.map((artist)=>artist.name),
             is_present : item.is_already_present,
             uri : item.uri
@@ -82,13 +77,14 @@ export default function SearchPage(){
     return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
-      <Box sx={{ p: 3}}>
+      <Box sx={{ p: 2}}>
         <Typography component="h3" variant="h3">
           Search for songs
           </Typography>
           </Box>
       </Grid>
       <Grid item xs={12}>
+      <Alert severity="success">Song added to database!</Alert>
       <Box sx={{ m: 3}}>
       <form
             method="get"
@@ -118,6 +114,7 @@ export default function SearchPage(){
           pageSize={25}
           rowsPerPageOptions={[25]}
           rowCount={25}
+          loading={loading}
         />
         </div>
         </div>
