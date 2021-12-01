@@ -42,7 +42,7 @@ export default function ServerPaginationGrid() {
           </Box>
       </Grid> */}
       <Grid item xs={11} align="center">
-        <p style={{ marginLeft: '4%', fontWeight: 500, fontFamily: '"Roboto","Helvetica","Arial","sans-serif"', textAlign: 'center' }}>      Tracks</p>
+        <p style={{ marginLeft: '4%', fontWeight: 500, fontFamily: '"Roboto","Helvetica","Arial","sans-serif"', textAlign: 'center' }}>Tracks</p>
       </Grid>
       <SongsGrid filter={{}} />
       </Grid>

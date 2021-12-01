@@ -51,7 +51,6 @@ def get_user_audio_features(audio_features):
             list2 = centers[j].tolist()
             squares = [(p-q) ** 2 for p, q in zip(list1, list2)]
             squares = sum(squares) ** .5
-            print(squares)
             if squares < min_square :
                 cluster_id = j
                 min_square = squares
@@ -65,6 +64,5 @@ def generate_cluster_ids(cluster_ids,ids_of_users):
     final_df = pd.concat([cluster_ids,ids_of_users.toPandas()],axis=1)
     final = final_df.to_json(orient='index')
     final = json.loads(final)
-    print(final)
     for f in final:
         return final[f]['cluster_id']

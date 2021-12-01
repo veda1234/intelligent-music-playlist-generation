@@ -1,6 +1,7 @@
 from rest_framework import viewsets
 from .models import Track, UserTrack
 from albums.models import Album
+from artists.models import Artist
 from song_features.models import TrackFeatures 
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -197,6 +198,8 @@ class SongView(viewsets.ViewSet):
                 song_response['cluster'] = get_user_cluster_ids.get_user_audio_features(audio_features)
             Track.write_item(song_response)
             Album.write_item(album_response)
+            for artist in song_response['artists']:
+                artist = Artist.write_item(artist)
             if lyrics and audio_features:
                 lyrics['audio_features'] = audio_features
             if lyrics:

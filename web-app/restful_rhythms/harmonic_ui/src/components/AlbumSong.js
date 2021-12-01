@@ -24,12 +24,12 @@ export default function AlbumSong(props) {
   return (
     <Grid container spacing={3}>
       <NavBar />
-       <Grid item xs={11} align="center">
-        <p style={{ marginLeft: '4%', fontWeight: 500, fontFamily: '"Roboto","Helvetica","Arial","sans-serif"' }}>Tracks in {album.name}</p>
+       <Grid item xs={12} align="center">
+       <Typography component="h4" variant="h4" align="center">Tracks in {album.name}</Typography>
       </Grid>
-      <Grid style={{marginLeft: 30 }}>
-      <h4>Artists: </h4> <p>{album.artists.map(artist => artist.name)}</p>
-      <h4>Release date: </h4> <p>{album.release_date}</p>
+      <Grid item xs={12} align="center">
+      <Typography component="h5" variant="h5">Artists</Typography> <Typography display="block" variant="body1" gutterBottom>{album.artists.map(artist => artist.name)}</Typography>
+      <Typography component="h5" variant="h5">Release date</Typography> <Typography display="block" variant="body1" gutterBottom>{album.release_date}</Typography>
       </Grid>
       <SongsGrid filter={{album: album.id}} />
       </Grid>

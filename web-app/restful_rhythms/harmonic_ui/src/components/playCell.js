@@ -7,8 +7,8 @@ let music;
 
 export default function PlayCell(props) {
     const [playing, setPlaying] = React.useState(false);
-    const play = (<PlayArrowOutlined color="primary"></PlayArrowOutlined>)
-    const pause = (<PauseOutlined color="primary"></PauseOutlined>)
+    const play = (<PlayArrowOutlined fontSize={props.large ? 'large' : 'medium' } color="primary"></PlayArrowOutlined>)
+    const pause = (<PauseOutlined color="primary" fontSize={props.large ? 'large' : 'medium' }></PauseOutlined>)
 
     React.useEffect(() => {
         if(music) 
@@ -24,7 +24,7 @@ export default function PlayCell(props) {
 
 
     return (
-    <Grid item align="center" style={{marginLeft: '30%'}} onClick={(ev) => setPlaying(!playing) }>
+    <Grid item align="center" style={{marginLeft: props.large ? '1%' : '30%'}} onClick={(ev) => setPlaying(!playing) }>
         {playing ? pause : play }
     </Grid>);
 }

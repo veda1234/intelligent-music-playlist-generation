@@ -16,7 +16,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import Radio from '@mui/material/Radio';
 import PlayCell from './playCell';
 
-const numRows =  Math.round((Math.random() * 5000000))
+const numRows =  Math.round((Math.random() * 2500000))
 export default function SongsGrid(props) {
   
   const columns = [

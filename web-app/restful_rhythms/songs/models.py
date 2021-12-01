@@ -2,6 +2,10 @@ from common_utils import FirestoreModel
 import traceback
 
 
+def chunks(l, n):
+    n = max(1, n)
+    return (l[i:i+n] for i in range(0, len(l), n))
+
 class TrackClass(FirestoreModel):
     def __init__(self):
         super(TrackClass, self).__init__('tracks')
@@ -9,14 +13,20 @@ class TrackClass(FirestoreModel):
     def get_songs(self,query_params={}, prevRecord = None, nextRecord=None, limit = 25):
         try:
             query = []
+            split_ids = None
+            if query_params.get('id'):
+                split_ids = chunks(query_params['id'], 10)   
             for key in query_params:
-                if key == 'id':
-                    query.append((key,'in',query_params[key]))
-                elif key == 'artist_id':
+                if key == 'artist_id':
                     query.append((key, 'array_contains', query_params[key]))
-                else:
+                elif (key != 'id'):
                     query.append((key, '==', query_params[key]))
-            songs = super().list_items(query=query, limit = 25, LastEvaluatedKey=prevRecord, nextRecord = nextRecord)
+            if not split_ids:
+                songs = super().list_items(query=query, limit = 25, LastEvaluatedKey=prevRecord, nextRecord = nextRecord)
+                return songs
+            songs = []
+            for split_id in split_ids:
+                songs.extend(super().list_items(query=query + [('id','in',split_id)], limit = 25, LastEvaluatedKey=prevRecord, nextRecord = nextRecord))
             return songs
         except:
             print("some error occured in fetching songs")
