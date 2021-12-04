@@ -53,6 +53,6 @@ def get_song_emotion(song_name, artist_name):
         raise
 
 if __name__ == '__main__':
-    song_name = input("Enter song name")
-    artist_name = input("Enter artist name")
+    song_name = input("Enter song name : ")
+    artist_name = input("Enter artist name : ")
     print(get_song_emotion(song_name, artist_name))
